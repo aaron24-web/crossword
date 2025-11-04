@@ -1,0 +1,52 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'audio_service.dart';
+import 'widgets/home_screen.dart';
+
+void main() async {
+  // Asegurar que Flutter esté inicializado
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Inicializar servicio de audio
+  try {
+    await AudioService().initialize();
+    await AudioService().playBackgroundMusic();
+    debugPrint('✅ Audio initialized successfully');
+  } catch (e) {
+    debugPrint('⚠️ Audio initialization failed: $e');
+    // Continuar sin audio si falla
+  }
+
+  runApp(
+    ProviderScope(
+      child: MaterialApp(
+        title: 'Crossword Puzzle',
+        debugShowCheckedModeBanner: false,
+        debugShowMaterialGrid: false,
+        showPerformanceOverlay: false,
+        theme: ThemeData(
+          // Paleta de colores estilo CodyCross
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Color(0xFF7C3AED), // Morado vibrante
+            primary: Color(0xFF7C3AED),
+            secondary: Color(0xFF3B82F6), // Azul
+            tertiary: Color(0xFFFBBF24), // Amarillo
+            brightness: Brightness.light,
+          ),
+          useMaterial3: true,
+          // Botones redondeados
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+            ),
+          ),
+        ),
+        home: HomeScreen(),
+      ),
+    ),
+  );
+}
