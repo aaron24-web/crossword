@@ -18,6 +18,18 @@ class DatabaseService {
       ..name = data['name'])).toList();
   }
 
+  Future<List<Word>> getWords() async {
+    final response = await _client.from('words').select();
+    if (response.isEmpty) {
+      return [];
+    }
+    return response.map((data) => Word((b) => b
+      ..id = data['id']
+      ..word = data['word']
+      ..clue = data['clue']
+      ..categoryId = data['category_id'])).toList();
+  }
+
   Future<List<Word>> getWordsByCategory(int categoryId) async {
     final response = await _client
         .from('words')

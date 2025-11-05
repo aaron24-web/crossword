@@ -6,11 +6,17 @@ import 'package:flutter/services.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import 'database_service.dart';
 import 'isolates.dart';
 import 'level_data.dart';
 import 'model.dart' as model;
+import 'supabase_service.dart';
 
 part 'providers.g.dart';
+
+enum AppMode { online, offline }
+
+final appModeProvider = StateProvider<AppMode>((ref) => AppMode.online);
 
 final playerProvider = StateProvider<model.Player?>((ref) => null);
 
@@ -18,17 +24,65 @@ final selectedThemeProvider = StateProvider<LevelTheme?>((ref) => null);
 
 const backgroundWorkerCount = 4;
 
+// Default local categories for offline mode or Supabase fallback
+final _defaultLocalCategories = <model.Category>[
+  model.Category((b) => b..id = 1..name = 'Animales'),
+  model.Category((b) => b..id = 2..name = 'Comida'),
+  model.Category((b) => b..id = 3..name = 'Deportes'),
+  model.Category((b) => b..id = 4..name = 'Países'),
+  model.Category((b) => b..id = 5..name = 'Ciencia'),
+];
+
+final categoriesProvider = FutureProvider<List<model.Category>>((ref) async {
+  final appMode = ref.watch(appModeProvider);
+
+  if (appMode == AppMode.online) {
+    try {
+      final dbService = DatabaseService(SupabaseService.client);
+      final categoriesFromSupabase = await dbService.getCategories();
+      if (categoriesFromSupabase.isNotEmpty) {
+        debugPrint('✅ Categories loaded from Supabase');
+        return categoriesFromSupabase;
+      }
+    } catch (e) {
+      debugPrint('⚠️ Failed to load categories from Supabase, falling back to local: $e');
+      // Fallback to local categories if Supabase fails
+    }
+  }
+  debugPrint('✅ Categories loaded from local defaults');
+  return _defaultLocalCategories;
+});
+
 /// A provider for the wordlist to use when generating the crossword.
 @riverpod
 Future<BuiltSet<String>> wordList(WordListRef ref) async {
-  // This codebase requires that all words consist of lowercase characters
-  // in the range 'a'-'z'. Words containing uppercase letters will be
-  // lowercased, and words containing runes outside this range will
-  // be removed.
-
+  final appMode = ref.watch(appModeProvider);
   final re = RegExp(r'^[a-z]+$');
+
+  BuiltSet<String> wordsSet;
+
+  if (appMode == AppMode.online) {
+    try {
+      final dbService = DatabaseService(SupabaseService.client);
+      final wordsFromSupabase = await dbService.getWords();
+      wordsSet = wordsFromSupabase
+          .map((word) => word.word.toLowerCase().trim())
+          .where((word) => word.length > 2)
+          .where((word) => re.hasMatch(word))
+          .toBuiltSet();
+      if (wordsSet.isNotEmpty) {
+        debugPrint('✅ Words loaded from Supabase');
+        return wordsSet;
+      }
+    } catch (e) {
+      debugPrint('⚠️ Failed to load words from Supabase, falling back to local assets: $e');
+      // Fallback to local assets if Supabase fails
+    }
+  }
+
+  // Load from local assets
   final words = await rootBundle.loadString('assets/words.txt');
-  return const LineSplitter()
+  wordsSet = const LineSplitter()
       .convert(words)
       .toBuiltSet()
       .rebuild(
@@ -37,6 +91,8 @@ Future<BuiltSet<String>> wordList(WordListRef ref) async {
           ..where((word) => word.length > 2)
           ..where((word) => re.hasMatch(word)),
       );
+  debugPrint('✅ Words loaded from local assets');
+  return wordsSet;
 }
 
 /// An enumeration for different sizes of [model.Crossword]s.

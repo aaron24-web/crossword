@@ -4,13 +4,11 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../database_service.dart';
 import '../model.dart';
+import '../providers.dart'; // Import the global providers
 import '../supabase_service.dart';
 import '../utils.dart';
 
-final categoriesProvider = FutureProvider<List<Category>>((ref) async {
-  final dbService = DatabaseService(SupabaseService.client);
-  return dbService.getCategories();
-});
+// categoriesProvider will be moved to lib/providers.dart
 
 final selectedCategoryProvider = StateProvider<Category?>((ref) {
   final categories = ref.watch(categoriesProvider);

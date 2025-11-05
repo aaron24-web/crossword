@@ -34,7 +34,12 @@ void main() async {
   Player? player;
   if (playerId != null) {
     final dbService = DatabaseService(SupabaseService.client);
-    player = await dbService.getPlayerById(playerId);
+    try {
+      player = await dbService.getPlayerById(playerId);
+    } catch (e) {
+      debugPrint('Error fetching player from Supabase: $e');
+      player = null; // Fallback to null player if fetching fails
+    }
     if (player != null) {
       home = const HomeScreen();
     }
