@@ -17,10 +17,10 @@ class HomeScreen extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF6B46C1), // Morado oscuro
-              Color(0xFF7C3AED), // Morado medio
-              Color(0xFF8B5CF6), // Morado claro
-              Color(0xFF3B82F6), // Azul
+              Color(0xFF1E3A8A), // Azul oscuro
+              Color(0xFF2563EB), // Azul medio
+              Color(0xFF3B82F6), // Azul claro
+              Color(0xFF60A5FA), // Azul muy claro
             ],
           ),
         ),
@@ -146,14 +146,14 @@ class HomeScreen extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.yellow.shade400,
-            Colors.orange.shade500,
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.secondary,
           ],
         ),
         borderRadius: BorderRadius.circular(35),
         boxShadow: [
           BoxShadow(
-            color: Colors.orange.withOpacity(0.5),
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
             blurRadius: 20,
             offset: Offset(0, 10),
           ),
@@ -212,14 +212,14 @@ class HomeScreen extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.purple.shade400,
-            Colors.blue.shade500,
+            Theme.of(context).colorScheme.secondary,
+            Theme.of(context).colorScheme.primary,
           ],
         ),
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-            color: Colors.purple.withOpacity(0.4),
+            color: Theme.of(context).colorScheme.secondary.withOpacity(0.4),
             blurRadius: 15,
             offset: Offset(0, 8),
           ),

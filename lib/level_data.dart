@@ -32,8 +32,8 @@ class GameLevels {
       description: 'Descubre el reino animal',
       wordListAsset: 'assets/words_animales.txt',
       icon: Icons.pets,
-      primaryColor: Color(0xFF10B981), // Verde
-      secondaryColor: Color(0xFF059669),
+      primaryColor: Color(0xFF2196F3), // Azul claro
+      secondaryColor: Color(0xFF1976D2),
       levelNumber: 1,
     ),
     LevelTheme(
@@ -42,8 +42,8 @@ class GameLevels {
       description: 'Explora el mundo gastronómico',
       wordListAsset: 'assets/words_comida.txt',
       icon: Icons.restaurant,
-      primaryColor: Color(0xFFF59E0B), // Naranja
-      secondaryColor: Color(0xFFD97706),
+      primaryColor: Color(0xFF03A9F4), // Azul cielo
+      secondaryColor: Color(0xFF0288D1),
       levelNumber: 2,
     ),
     LevelTheme(
@@ -52,8 +52,8 @@ class GameLevels {
       description: 'Conoce diferentes disciplinas',
       wordListAsset: 'assets/words_deportes.txt',
       icon: Icons.sports_soccer,
-      primaryColor: Color(0xFF3B82F6), // Azul
-      secondaryColor: Color(0xFF2563EB),
+      primaryColor: Color(0xFF00BCD4), // Azul verdoso
+      secondaryColor: Color(0xFF0097A7),
       levelNumber: 3,
     ),
     LevelTheme(
@@ -62,8 +62,8 @@ class GameLevels {
       description: 'Viaja por el mundo',
       wordListAsset: 'assets/words_paises.txt',
       icon: Icons.public,
-      primaryColor: Color(0xFFEC4899), // Rosa
-      secondaryColor: Color(0xFFDB2777),
+      primaryColor: Color(0xFF009688), // Azul azulado
+      secondaryColor: Color(0xFF00796B),
       levelNumber: 4,
     ),
     LevelTheme(
@@ -72,8 +72,8 @@ class GameLevels {
       description: 'Descubre el universo científico',
       wordListAsset: 'assets/words_ciencia.txt',
       icon: Icons.science,
-      primaryColor: Color(0xFF8B5CF6), // Morado
-      secondaryColor: Color(0xFF7C3AED),
+      primaryColor: Color(0xFF3F51B5), // Azul índigo
+      secondaryColor: Color(0xFF303F9F),
       levelNumber: 5,
     ),
   ];

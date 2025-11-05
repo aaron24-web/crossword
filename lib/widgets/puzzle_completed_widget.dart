@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../audio_service.dart';
 import 'confetti_widget.dart';
+import 'home_screen.dart';
 
 class PuzzleCompletedWidget extends StatefulWidget {
   const PuzzleCompletedWidget({super.key});
@@ -59,7 +60,7 @@ class _PuzzleCompletedWidgetState extends State<PuzzleCompletedWidget> {
                 style: GoogleFonts.poppins(
                   fontSize: 48,
                   fontWeight: FontWeight.w900,
-                  color: Color(0xFF7C3AED),
+                  color: Theme.of(context).colorScheme.primary,
                   shadows: [
                     Shadow(
                       color: Colors.black.withOpacity(0.2),
@@ -81,7 +82,7 @@ class _PuzzleCompletedWidgetState extends State<PuzzleCompletedWidget> {
                 style: GoogleFonts.poppins(
                   fontSize: 28,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF3B82F6),
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
               )
                   .animate()
@@ -97,14 +98,14 @@ class _PuzzleCompletedWidgetState extends State<PuzzleCompletedWidget> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Colors.purple.shade400,
-                      Colors.blue.shade500,
+                      Theme.of(context).colorScheme.primary,
+                      Theme.of(context).colorScheme.secondary,
                     ],
                   ),
                   borderRadius: BorderRadius.circular(30),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.purple.withOpacity(0.4),
+                      color: Theme.of(context).colorScheme.primary.withOpacity(0.4),
                       blurRadius: 15,
                       offset: Offset(0, 8),
                     ),
@@ -115,7 +116,10 @@ class _PuzzleCompletedWidgetState extends State<PuzzleCompletedWidget> {
                   child: InkWell(
                     onTap: () {
                       // Reiniciar el juego
-                      Navigator.of(context).pop();
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => const HomeScreen()),
+                        (Route<dynamic> route) => false,
+                      );
                     },
                     borderRadius: BorderRadius.circular(30),
                     child: Center(

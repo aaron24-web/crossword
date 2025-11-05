@@ -17,10 +17,10 @@ class LevelSelectionScreen extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF6B46C1),
-              Color(0xFF7C3AED),
-              Color(0xFF8B5CF6),
-              Color(0xFF3B82F6),
+              Color(0xFF1E3A8A), // Azul oscuro
+              Color(0xFF2563EB), // Azul medio
+              Color(0xFF3B82F6), // Azul claro
+              Color(0xFF60A5FA), // Azul muy claro
             ],
           ),
         ),

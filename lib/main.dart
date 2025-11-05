@@ -28,10 +28,7 @@ void main() async {
         theme: ThemeData(
           // Paleta de colores estilo CodyCross
           colorScheme: ColorScheme.fromSeed(
-            seedColor: Color(0xFF7C3AED), // Morado vibrante
-            primary: Color(0xFF7C3AED),
-            secondary: Color(0xFF3B82F6), // Azul
-            tertiary: Color(0xFFFBBF24), // Amarillo
+            seedColor: Color(0xFF3B82F6), // Azul
             brightness: Brightness.light,
           ),
           useMaterial3: true,
