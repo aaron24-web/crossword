@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'crossword_puzzle_app.dart';
 import 'level_selection_screen.dart';
+import 'ranking_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -49,6 +50,11 @@ class HomeScreen extends StatelessWidget {
 
                 // Botón Niveles Temáticos (NUEVO)
                 _buildLevelsButton(context),
+
+                SizedBox(height: 15),
+
+                // Botón Ranking
+                _buildRankingButton(context),
 
                 Spacer(flex: 2),
 
@@ -266,6 +272,66 @@ class HomeScreen extends StatelessWidget {
         .slideY(begin: 0.3, end: 0);
   }
 
+  Widget _buildRankingButton(BuildContext context) {
+    return Container(
+      width: 280,
+      height: 60,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Theme.of(context).colorScheme.secondary,
+            Theme.of(context).colorScheme.primary,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).colorScheme.secondary.withOpacity(0.4),
+            blurRadius: 15,
+            offset: Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => RankingScreen(),
+              ),
+            );
+          },
+          borderRadius: BorderRadius.circular(30),
+          child: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.leaderboard,
+                  size: 28,
+                  color: Colors.white,
+                ),
+                SizedBox(width: 10),
+                Text(
+                  'RANKING',
+                  style: GoogleFonts.poppins(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                    letterSpacing: 1,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    )
+        .animate()
+        .fadeIn(duration: 600.ms, delay: 800.ms)
+        .slideY(begin: 0.3, end: 0);
+  }
 
   Widget _buildVersion() {
     return Text(

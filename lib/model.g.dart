@@ -8,12 +8,16 @@ part of 'model.dart';
 
 Serializers _$serializers =
     (Serializers().toBuilder()
+          ..add(Category.serializer)
           ..add(Crossword.serializer)
           ..add(CrosswordCharacter.serializer)
           ..add(CrosswordPuzzleGame.serializer)
           ..add(CrosswordWord.serializer)
           ..add(DisplayInfo.serializer)
           ..add(Location.serializer)
+          ..add(Player.serializer)
+          ..add(Score.serializer)
+          ..add(Word.serializer)
           ..add(WorkQueue.serializer)
           ..addBuilderFactory(
             const FullType(BuiltList, const [const FullType(CrosswordWord)]),
@@ -57,6 +61,10 @@ Serializers _$serializers =
             () => SetBuilder<String>(),
           ))
         .build();
+Serializer<Category> _$categorySerializer = _$CategorySerializer();
+Serializer<Word> _$wordSerializer = _$WordSerializer();
+Serializer<Player> _$playerSerializer = _$PlayerSerializer();
+Serializer<Score> _$scoreSerializer = _$ScoreSerializer();
 Serializer<Location> _$locationSerializer = _$LocationSerializer();
 Serializer<CrosswordWord> _$crosswordWordSerializer =
     _$CrosswordWordSerializer();
@@ -67,6 +75,308 @@ Serializer<WorkQueue> _$workQueueSerializer = _$WorkQueueSerializer();
 Serializer<DisplayInfo> _$displayInfoSerializer = _$DisplayInfoSerializer();
 Serializer<CrosswordPuzzleGame> _$crosswordPuzzleGameSerializer =
     _$CrosswordPuzzleGameSerializer();
+
+class _$CategorySerializer implements StructuredSerializer<Category> {
+  @override
+  final Iterable<Type> types = const [Category, _$Category];
+  @override
+  final String wireName = 'Category';
+
+  @override
+  Iterable<Object?> serialize(
+    Serializers serializers,
+    Category object, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
+    final result = <Object?>[
+      'id',
+      serializers.serialize(object.id, specifiedType: const FullType(int)),
+      'name',
+      serializers.serialize(object.name, specifiedType: const FullType(String)),
+    ];
+
+    return result;
+  }
+
+  @override
+  Category deserialize(
+    Serializers serializers,
+    Iterable<Object?> serialized, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
+    final result = CategoryBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current! as String;
+      iterator.moveNext();
+      final Object? value = iterator.current;
+      switch (key) {
+        case 'id':
+          result.id =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(int),
+                  )!
+                  as int;
+          break;
+        case 'name':
+          result.name =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(String),
+                  )!
+                  as String;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$WordSerializer implements StructuredSerializer<Word> {
+  @override
+  final Iterable<Type> types = const [Word, _$Word];
+  @override
+  final String wireName = 'Word';
+
+  @override
+  Iterable<Object?> serialize(
+    Serializers serializers,
+    Word object, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
+    final result = <Object?>[
+      'id',
+      serializers.serialize(object.id, specifiedType: const FullType(int)),
+      'word',
+      serializers.serialize(object.word, specifiedType: const FullType(String)),
+      'clue',
+      serializers.serialize(object.clue, specifiedType: const FullType(String)),
+      'category_id',
+      serializers.serialize(
+        object.categoryId,
+        specifiedType: const FullType(int),
+      ),
+    ];
+
+    return result;
+  }
+
+  @override
+  Word deserialize(
+    Serializers serializers,
+    Iterable<Object?> serialized, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
+    final result = WordBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current! as String;
+      iterator.moveNext();
+      final Object? value = iterator.current;
+      switch (key) {
+        case 'id':
+          result.id =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(int),
+                  )!
+                  as int;
+          break;
+        case 'word':
+          result.word =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(String),
+                  )!
+                  as String;
+          break;
+        case 'clue':
+          result.clue =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(String),
+                  )!
+                  as String;
+          break;
+        case 'category_id':
+          result.categoryId =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(int),
+                  )!
+                  as int;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$PlayerSerializer implements StructuredSerializer<Player> {
+  @override
+  final Iterable<Type> types = const [Player, _$Player];
+  @override
+  final String wireName = 'Player';
+
+  @override
+  Iterable<Object?> serialize(
+    Serializers serializers,
+    Player object, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
+    final result = <Object?>[
+      'id',
+      serializers.serialize(object.id, specifiedType: const FullType(int)),
+      'name',
+      serializers.serialize(object.name, specifiedType: const FullType(String)),
+    ];
+
+    return result;
+  }
+
+  @override
+  Player deserialize(
+    Serializers serializers,
+    Iterable<Object?> serialized, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
+    final result = PlayerBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current! as String;
+      iterator.moveNext();
+      final Object? value = iterator.current;
+      switch (key) {
+        case 'id':
+          result.id =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(int),
+                  )!
+                  as int;
+          break;
+        case 'name':
+          result.name =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(String),
+                  )!
+                  as String;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$ScoreSerializer implements StructuredSerializer<Score> {
+  @override
+  final Iterable<Type> types = const [Score, _$Score];
+  @override
+  final String wireName = 'Score';
+
+  @override
+  Iterable<Object?> serialize(
+    Serializers serializers,
+    Score object, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
+    final result = <Object?>[
+      'id',
+      serializers.serialize(object.id, specifiedType: const FullType(int)),
+      'player_id',
+      serializers.serialize(
+        object.playerId,
+        specifiedType: const FullType(int),
+      ),
+      'time',
+      serializers.serialize(object.time, specifiedType: const FullType(int)),
+      'category_id',
+      serializers.serialize(
+        object.categoryId,
+        specifiedType: const FullType(int),
+      ),
+    ];
+    Object? value;
+    value = object.player;
+    if (value != null) {
+      result
+        ..add('player')
+        ..add(
+          serializers.serialize(value, specifiedType: const FullType(Player)),
+        );
+    }
+    return result;
+  }
+
+  @override
+  Score deserialize(
+    Serializers serializers,
+    Iterable<Object?> serialized, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
+    final result = ScoreBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current! as String;
+      iterator.moveNext();
+      final Object? value = iterator.current;
+      switch (key) {
+        case 'id':
+          result.id =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(int),
+                  )!
+                  as int;
+          break;
+        case 'player_id':
+          result.playerId =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(int),
+                  )!
+                  as int;
+          break;
+        case 'time':
+          result.time =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(int),
+                  )!
+                  as int;
+          break;
+        case 'category_id':
+          result.categoryId =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(int),
+                  )!
+                  as int;
+          break;
+        case 'player':
+          result.player.replace(
+            serializers.deserialize(
+                  value,
+                  specifiedType: const FullType(Player),
+                )!
+                as Player,
+          );
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
 
 class _$LocationSerializer implements StructuredSerializer<Location> {
   @override
@@ -699,6 +1009,460 @@ class _$CrosswordPuzzleGameSerializer
     }
 
     return result.build();
+  }
+}
+
+class _$Category extends Category {
+  @override
+  final int id;
+  @override
+  final String name;
+
+  factory _$Category([void Function(CategoryBuilder)? updates]) =>
+      (CategoryBuilder()..update(updates))._build();
+
+  _$Category._({required this.id, required this.name}) : super._();
+  @override
+  Category rebuild(void Function(CategoryBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  CategoryBuilder toBuilder() => CategoryBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is Category && id == other.id && name == other.name;
+  }
+
+  @override
+  int get hashCode {
+    var _$hash = 0;
+    _$hash = $jc(_$hash, id.hashCode);
+    _$hash = $jc(_$hash, name.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper(r'Category')
+          ..add('id', id)
+          ..add('name', name))
+        .toString();
+  }
+}
+
+class CategoryBuilder implements Builder<Category, CategoryBuilder> {
+  _$Category? _$v;
+
+  int? _id;
+  int? get id => _$this._id;
+  set id(int? id) => _$this._id = id;
+
+  String? _name;
+  String? get name => _$this._name;
+  set name(String? name) => _$this._name = name;
+
+  CategoryBuilder();
+
+  CategoryBuilder get _$this {
+    final $v = _$v;
+    if ($v != null) {
+      _id = $v.id;
+      _name = $v.name;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(Category other) {
+    _$v = other as _$Category;
+  }
+
+  @override
+  void update(void Function(CategoryBuilder)? updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  Category build() => _build();
+
+  _$Category _build() {
+    final _$result =
+        _$v ??
+        _$Category._(
+          id: BuiltValueNullFieldError.checkNotNull(id, r'Category', 'id'),
+          name: BuiltValueNullFieldError.checkNotNull(
+            name,
+            r'Category',
+            'name',
+          ),
+        );
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$Word extends Word {
+  @override
+  final int id;
+  @override
+  final String word;
+  @override
+  final String clue;
+  @override
+  final int categoryId;
+
+  factory _$Word([void Function(WordBuilder)? updates]) =>
+      (WordBuilder()..update(updates))._build();
+
+  _$Word._({
+    required this.id,
+    required this.word,
+    required this.clue,
+    required this.categoryId,
+  }) : super._();
+  @override
+  Word rebuild(void Function(WordBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  WordBuilder toBuilder() => WordBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is Word &&
+        id == other.id &&
+        word == other.word &&
+        clue == other.clue &&
+        categoryId == other.categoryId;
+  }
+
+  @override
+  int get hashCode {
+    var _$hash = 0;
+    _$hash = $jc(_$hash, id.hashCode);
+    _$hash = $jc(_$hash, word.hashCode);
+    _$hash = $jc(_$hash, clue.hashCode);
+    _$hash = $jc(_$hash, categoryId.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper(r'Word')
+          ..add('id', id)
+          ..add('word', word)
+          ..add('clue', clue)
+          ..add('categoryId', categoryId))
+        .toString();
+  }
+}
+
+class WordBuilder implements Builder<Word, WordBuilder> {
+  _$Word? _$v;
+
+  int? _id;
+  int? get id => _$this._id;
+  set id(int? id) => _$this._id = id;
+
+  String? _word;
+  String? get word => _$this._word;
+  set word(String? word) => _$this._word = word;
+
+  String? _clue;
+  String? get clue => _$this._clue;
+  set clue(String? clue) => _$this._clue = clue;
+
+  int? _categoryId;
+  int? get categoryId => _$this._categoryId;
+  set categoryId(int? categoryId) => _$this._categoryId = categoryId;
+
+  WordBuilder();
+
+  WordBuilder get _$this {
+    final $v = _$v;
+    if ($v != null) {
+      _id = $v.id;
+      _word = $v.word;
+      _clue = $v.clue;
+      _categoryId = $v.categoryId;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(Word other) {
+    _$v = other as _$Word;
+  }
+
+  @override
+  void update(void Function(WordBuilder)? updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  Word build() => _build();
+
+  _$Word _build() {
+    final _$result =
+        _$v ??
+        _$Word._(
+          id: BuiltValueNullFieldError.checkNotNull(id, r'Word', 'id'),
+          word: BuiltValueNullFieldError.checkNotNull(word, r'Word', 'word'),
+          clue: BuiltValueNullFieldError.checkNotNull(clue, r'Word', 'clue'),
+          categoryId: BuiltValueNullFieldError.checkNotNull(
+            categoryId,
+            r'Word',
+            'categoryId',
+          ),
+        );
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$Player extends Player {
+  @override
+  final int id;
+  @override
+  final String name;
+
+  factory _$Player([void Function(PlayerBuilder)? updates]) =>
+      (PlayerBuilder()..update(updates))._build();
+
+  _$Player._({required this.id, required this.name}) : super._();
+  @override
+  Player rebuild(void Function(PlayerBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  PlayerBuilder toBuilder() => PlayerBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is Player && id == other.id && name == other.name;
+  }
+
+  @override
+  int get hashCode {
+    var _$hash = 0;
+    _$hash = $jc(_$hash, id.hashCode);
+    _$hash = $jc(_$hash, name.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper(r'Player')
+          ..add('id', id)
+          ..add('name', name))
+        .toString();
+  }
+}
+
+class PlayerBuilder implements Builder<Player, PlayerBuilder> {
+  _$Player? _$v;
+
+  int? _id;
+  int? get id => _$this._id;
+  set id(int? id) => _$this._id = id;
+
+  String? _name;
+  String? get name => _$this._name;
+  set name(String? name) => _$this._name = name;
+
+  PlayerBuilder();
+
+  PlayerBuilder get _$this {
+    final $v = _$v;
+    if ($v != null) {
+      _id = $v.id;
+      _name = $v.name;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(Player other) {
+    _$v = other as _$Player;
+  }
+
+  @override
+  void update(void Function(PlayerBuilder)? updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  Player build() => _build();
+
+  _$Player _build() {
+    final _$result =
+        _$v ??
+        _$Player._(
+          id: BuiltValueNullFieldError.checkNotNull(id, r'Player', 'id'),
+          name: BuiltValueNullFieldError.checkNotNull(name, r'Player', 'name'),
+        );
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$Score extends Score {
+  @override
+  final int id;
+  @override
+  final int playerId;
+  @override
+  final int time;
+  @override
+  final int categoryId;
+  @override
+  final Player? player;
+
+  factory _$Score([void Function(ScoreBuilder)? updates]) =>
+      (ScoreBuilder()..update(updates))._build();
+
+  _$Score._({
+    required this.id,
+    required this.playerId,
+    required this.time,
+    required this.categoryId,
+    this.player,
+  }) : super._();
+  @override
+  Score rebuild(void Function(ScoreBuilder) updates) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  ScoreBuilder toBuilder() => ScoreBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is Score &&
+        id == other.id &&
+        playerId == other.playerId &&
+        time == other.time &&
+        categoryId == other.categoryId &&
+        player == other.player;
+  }
+
+  @override
+  int get hashCode {
+    var _$hash = 0;
+    _$hash = $jc(_$hash, id.hashCode);
+    _$hash = $jc(_$hash, playerId.hashCode);
+    _$hash = $jc(_$hash, time.hashCode);
+    _$hash = $jc(_$hash, categoryId.hashCode);
+    _$hash = $jc(_$hash, player.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper(r'Score')
+          ..add('id', id)
+          ..add('playerId', playerId)
+          ..add('time', time)
+          ..add('categoryId', categoryId)
+          ..add('player', player))
+        .toString();
+  }
+}
+
+class ScoreBuilder implements Builder<Score, ScoreBuilder> {
+  _$Score? _$v;
+
+  int? _id;
+  int? get id => _$this._id;
+  set id(int? id) => _$this._id = id;
+
+  int? _playerId;
+  int? get playerId => _$this._playerId;
+  set playerId(int? playerId) => _$this._playerId = playerId;
+
+  int? _time;
+  int? get time => _$this._time;
+  set time(int? time) => _$this._time = time;
+
+  int? _categoryId;
+  int? get categoryId => _$this._categoryId;
+  set categoryId(int? categoryId) => _$this._categoryId = categoryId;
+
+  PlayerBuilder? _player;
+  PlayerBuilder get player => _$this._player ??= PlayerBuilder();
+  set player(PlayerBuilder? player) => _$this._player = player;
+
+  ScoreBuilder();
+
+  ScoreBuilder get _$this {
+    final $v = _$v;
+    if ($v != null) {
+      _id = $v.id;
+      _playerId = $v.playerId;
+      _time = $v.time;
+      _categoryId = $v.categoryId;
+      _player = $v.player?.toBuilder();
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(Score other) {
+    _$v = other as _$Score;
+  }
+
+  @override
+  void update(void Function(ScoreBuilder)? updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  Score build() => _build();
+
+  _$Score _build() {
+    _$Score _$result;
+    try {
+      _$result =
+          _$v ??
+          _$Score._(
+            id: BuiltValueNullFieldError.checkNotNull(id, r'Score', 'id'),
+            playerId: BuiltValueNullFieldError.checkNotNull(
+              playerId,
+              r'Score',
+              'playerId',
+            ),
+            time: BuiltValueNullFieldError.checkNotNull(time, r'Score', 'time'),
+            categoryId: BuiltValueNullFieldError.checkNotNull(
+              categoryId,
+              r'Score',
+              'categoryId',
+            ),
+            player: _player?.build(),
+          );
+    } catch (_) {
+      late String _$failedField;
+      try {
+        _$failedField = 'player';
+        _player?.build();
+      } catch (e) {
+        throw BuiltValueNestedFieldError(r'Score', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
   }
 }
 

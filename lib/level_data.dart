@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 /// Definición de un nivel temático
 class LevelTheme {
-  final String id;
+  final int id;
   final String name;
   final String description;
   final String wordListAsset;
@@ -27,7 +27,7 @@ class LevelTheme {
 class GameLevels {
   static const List<LevelTheme> levels = [
     LevelTheme(
-      id: 'animales',
+      id: 1,
       name: 'Animales',
       description: 'Descubre el reino animal',
       wordListAsset: 'assets/words_animales.txt',
@@ -37,7 +37,7 @@ class GameLevels {
       levelNumber: 1,
     ),
     LevelTheme(
-      id: 'comida',
+      id: 2,
       name: 'Comida',
       description: 'Explora el mundo gastronómico',
       wordListAsset: 'assets/words_comida.txt',
@@ -47,7 +47,7 @@ class GameLevels {
       levelNumber: 2,
     ),
     LevelTheme(
-      id: 'deportes',
+      id: 3,
       name: 'Deportes',
       description: 'Conoce diferentes disciplinas',
       wordListAsset: 'assets/words_deportes.txt',
@@ -57,7 +57,7 @@ class GameLevels {
       levelNumber: 3,
     ),
     LevelTheme(
-      id: 'paises',
+      id: 4,
       name: 'Países',
       description: 'Viaja por el mundo',
       wordListAsset: 'assets/words_paises.txt',
@@ -67,7 +67,7 @@ class GameLevels {
       levelNumber: 4,
     ),
     LevelTheme(
-      id: 'ciencia',
+      id: 5,
       name: 'Ciencia',
       description: 'Descubre el universo científico',
       wordListAsset: 'assets/words_ciencia.txt',
@@ -79,7 +79,7 @@ class GameLevels {
   ];
 
   /// Obtener nivel por ID
-  static LevelTheme? getLevelById(String id) {
+  static LevelTheme? getLevelById(int id) {
     try {
       return levels.firstWhere((level) => level.id == id);
     } catch (e) {

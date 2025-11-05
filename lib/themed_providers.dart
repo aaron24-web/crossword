@@ -16,7 +16,7 @@ Future<BuiltSet<String>> themedWordList(
   ThemedWordListRef ref,
   String themeId,
 ) async {
-  final level = GameLevels.getLevelById(themeId);
+  final level = GameLevels.getLevelById(int.parse(themeId));
   if (level == null) {
     return BuiltSet<String>();
   }

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:built_collection/built_collection.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 /// A [Random] instance for generating random numbers.
 final _random = Random();
@@ -27,4 +28,10 @@ extension DurationFormat on Duration {
       _ => '$inDays days, $hours:$minutes:$seconds',
     };
   }
+}
+
+Future<bool> hasInternetConnection() async {
+  final connectivityResult = await Connectivity().checkConnectivity();
+  return connectivityResult.contains(ConnectivityResult.mobile) ||
+      connectivityResult.contains(ConnectivityResult.wifi);
 }

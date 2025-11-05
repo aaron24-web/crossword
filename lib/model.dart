@@ -6,6 +6,59 @@ import 'package:intl/intl.dart';
 
 part 'model.g.dart';
 
+abstract class Category implements Built<Category, CategoryBuilder> {
+  static Serializer<Category> get serializer => _$categorySerializer;
+
+  int get id;
+  String get name;
+
+  Category._();
+  factory Category([void Function(CategoryBuilder)? updates]) = _$Category;
+}
+
+abstract class Word implements Built<Word, WordBuilder> {
+  static Serializer<Word> get serializer => _$wordSerializer;
+
+  int get id;
+  String get word;
+  String get clue;
+
+  @BuiltValueField(wireName: 'category_id')
+  int get categoryId;
+
+  Word._();
+  factory Word([void Function(WordBuilder)? updates]) = _$Word;
+}
+
+abstract class Player implements Built<Player, PlayerBuilder> {
+  static Serializer<Player> get serializer => _$playerSerializer;
+
+  int get id;
+  String get name;
+
+  Player._();
+  factory Player([void Function(PlayerBuilder)? updates]) = _$Player;
+}
+
+abstract class Score implements Built<Score, ScoreBuilder> {
+  static Serializer<Score> get serializer => _$scoreSerializer;
+
+  int get id;
+
+  @BuiltValueField(wireName: 'player_id')
+  int get playerId;
+
+  int get time;
+
+  @BuiltValueField(wireName: 'category_id')
+  int get categoryId;
+
+  Player? get player;
+
+  Score._();
+  factory Score([void Function(ScoreBuilder)? updates]) = _$Score;
+}
+
 /// A location in a crossword.
 abstract class Location implements Built<Location, LocationBuilder> {
   static Serializer<Location> get serializer => _$locationSerializer;
@@ -750,5 +803,9 @@ abstract class CrosswordPuzzleGame
   WorkQueue,
   DisplayInfo,
   CrosswordPuzzleGame,
+  Category,
+  Word,
+  Player,
+  Score,
 ])
 final Serializers serializers = _$serializers;

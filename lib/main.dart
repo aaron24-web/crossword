@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'audio_service.dart';
-import 'widgets/home_screen.dart';
+import 'supabase_service.dart';
+import 'widgets/player_registration_screen.dart';
 
 void main() async {
   // Asegurar que Flutter esté inicializado
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Inicializar Supabase
+  await SupabaseService.initialize();
 
   // Inicializar servicio de audio
   try {
@@ -42,7 +46,7 @@ void main() async {
             ),
           ),
         ),
-        home: HomeScreen(),
+        home: PlayerRegistrationScreen(),
       ),
     ),
   );

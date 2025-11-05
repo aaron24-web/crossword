@@ -26,11 +26,12 @@ dependencies:
   lottie: ^3.1.3                    # Animaciones Lottie (JSON)
   
   # Supabase (para futuro)
-  supabase_flutter: ^2.8.0          # Cliente de Supabase
+  supabase_flutter: ^2.10.3          # Cliente de Supabase
   
   # UI Mejorada
   google_fonts: ^6.2.1              # Fuentes personalizadas
   shimmer: ^3.0.0                   # Efectos de carga brillantes
+  connectivity_plus: ^7.0.0
 
 dev_dependencies:
   flutter_test:

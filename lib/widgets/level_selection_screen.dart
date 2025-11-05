@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../level_data.dart';
+import '../providers.dart';
 import 'themed_crossword_screen.dart';
 
-class LevelSelectionScreen extends StatelessWidget {
+class LevelSelectionScreen extends ConsumerWidget {
   const LevelSelectionScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -32,7 +34,7 @@ class LevelSelectionScreen extends StatelessWidget {
               
               // Niveles
               Expanded(
-                child: _buildLevelGrid(),
+                child: _buildLevelGrid(ref),
               ),
             ],
           ),
@@ -84,7 +86,7 @@ class LevelSelectionScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLevelGrid() {
+  Widget _buildLevelGrid(WidgetRef ref) {
     return GridView.builder(
       padding: EdgeInsets.all(20),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -96,12 +98,12 @@ class LevelSelectionScreen extends StatelessWidget {
       itemCount: GameLevels.levels.length,
       itemBuilder: (context, index) {
         final level = GameLevels.levels[index];
-        return _buildLevelCard(context, level, index);
+        return _buildLevelCard(context, level, index, ref);
       },
     );
   }
 
-  Widget _buildLevelCard(BuildContext context, LevelTheme level, int index) {
+  Widget _buildLevelCard(BuildContext context, LevelTheme level, int index, WidgetRef ref) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Container(
@@ -127,6 +129,7 @@ class LevelSelectionScreen extends StatelessWidget {
           color: Colors.transparent,
           child: InkWell(
             onTap: () {
+              ref.read(selectedThemeProvider.notifier).state = level;
               Navigator.push(
                 context,
                 MaterialPageRoute(

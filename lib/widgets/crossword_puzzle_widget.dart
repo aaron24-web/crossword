@@ -1,25 +1,84 @@
+import 'dart:async';
+
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 import '../audio_service.dart';
+import '../database_service.dart';
 import '../model.dart';
 import '../providers.dart';
+import '../supabase_service.dart';
+import '../utils.dart';
 
-class CrosswordPuzzleWidget extends ConsumerWidget {
+class CrosswordPuzzleWidget extends ConsumerStatefulWidget {
   const CrosswordPuzzleWidget({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  _CrosswordPuzzleWidgetState createState() => _CrosswordPuzzleWidgetState();
+}
+
+class _CrosswordPuzzleWidgetState extends ConsumerState<CrosswordPuzzleWidget> {
+  final _stopwatch = Stopwatch();
+  late final Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _stopwatch.start();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _stopwatch.stop();
+    _timer.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final size = ref.watch(sizeProvider);
-    return TableView.builder(
-      diagonalDragBehavior: DiagonalDragBehavior.free,
-      cellBuilder: _buildCell,
-      columnCount: size.width,
-      columnBuilder: (index) => _buildSpan(context, index),
-      rowCount: size.height,
-      rowBuilder: (index) => _buildSpan(context, index),
+    ref.listen(puzzleProvider.select((puzzle) => puzzle.solved), (previous, solved) {
+      if (solved) {
+        _stopwatch.stop();
+        _timer.cancel();
+        final player = ref.read(playerProvider)!;
+        final theme = ref.read(selectedThemeProvider)!;
+        final score = Score(
+          (b) => b
+            ..playerId = player.id
+            ..time = _stopwatch.elapsed.inSeconds
+            ..categoryId = theme.id,
+        );
+        final dbService = DatabaseService(SupabaseService.client);
+        dbService.addScore(score);
+      }
+    });
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            _stopwatch.elapsed.formatted,
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
+        ),
+        Expanded(
+          child: TableView.builder(
+            diagonalDragBehavior: DiagonalDragBehavior.free,
+            cellBuilder: _buildCell,
+            columnCount: size.width,
+            columnBuilder: (index) => _buildSpan(context, index),
+            rowCount: size.height,
+            rowBuilder: (index) => _buildSpan(context, index),
+          ),
+        ),
+      ],
     );
   }
 

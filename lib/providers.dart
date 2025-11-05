@@ -7,9 +7,14 @@ import 'package:riverpod/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'isolates.dart';
+import 'level_data.dart';
 import 'model.dart' as model;
 
 part 'providers.g.dart';
+
+final playerProvider = StateProvider<model.Player?>((ref) => null);
+
+final selectedThemeProvider = StateProvider<LevelTheme?>((ref) => null);
 
 const backgroundWorkerCount = 4;
 

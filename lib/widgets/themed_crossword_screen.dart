@@ -40,13 +40,13 @@ class _ThemedCrosswordScreenState extends ConsumerState<ThemedCrosswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final puzzleAsync = ref.watch(themedPuzzleProvider(widget.theme.id));
-    final workQueueAsync = ref.watch(themedWorkQueueProvider(widget.theme.id));
+    final puzzleAsync = ref.watch(themedPuzzleProvider(widget.theme.id.toString()));
+    final workQueueAsync = ref.watch(themedWorkQueueProvider(widget.theme.id.toString()));
 
     // Inicializar puzzle cuando el crucigrama esté listo
     workQueueAsync.whenData((workQueue) {
       if (workQueue.isCompleted && workQueue.crossword.characters.isNotEmpty) {
-        final puzzleNotifier = ref.read(themedPuzzleProvider(widget.theme.id).notifier);
+        final puzzleNotifier = ref.read(themedPuzzleProvider(widget.theme.id.toString()).notifier);
         puzzleAsync.whenData((puzzleState) {
           if (puzzleState.isGenerating) {
             puzzleNotifier.initializeWithCrossword(workQueue.crossword);
@@ -67,7 +67,7 @@ class _ThemedCrosswordScreenState extends ConsumerState<ThemedCrosswordScreen> {
           IconButton(
             icon: Icon(Icons.refresh),
             onPressed: () {
-              ref.read(themedPuzzleProvider(widget.theme.id).notifier).clearAnswers();
+              ref.read(themedPuzzleProvider(widget.theme.id.toString()).notifier).clearAnswers();
             },
             tooltip: 'Limpiar respuestas',
           ),
@@ -247,7 +247,7 @@ class _ThemedCrosswordScreenState extends ConsumerState<ThemedCrosswordScreen> {
     String? userLetter;
     for (final wordWithClue in puzzleState.wordsWithClues) {
       final word = wordWithClue.word;
-      final answer = ref.read(themedPuzzleProvider(widget.theme.id).notifier).getAnswer(word);
+      final answer = ref.read(themedPuzzleProvider(widget.theme.id.toString()).notifier).getAnswer(word);
       
       if (answer != null) {
         final wordLocations = _getWordLocations(word);
@@ -429,7 +429,7 @@ class _ThemedCrosswordScreenState extends ConsumerState<ThemedCrosswordScreen> {
   }
 
   Widget _buildClueItem(WordWithClue wordWithClue) {
-    final isCorrect = ref.read(themedPuzzleProvider(widget.theme.id).notifier)
+    final isCorrect = ref.read(themedPuzzleProvider(widget.theme.id.toString()).notifier)
         .isAnswerCorrect(wordWithClue.word);
     final isSelected = _selectedWord == wordWithClue;
     final isMobile = MediaQuery.of(context).size.width < 600;
@@ -438,7 +438,7 @@ class _ThemedCrosswordScreenState extends ConsumerState<ThemedCrosswordScreen> {
       onTap: () {
         setState(() {
           _selectedWord = wordWithClue;
-          _answerController.text = ref.read(themedPuzzleProvider(widget.theme.id).notifier)
+          _answerController.text = ref.read(themedPuzzleProvider(widget.theme.id.toString()).notifier)
               .getAnswer(wordWithClue.word) ?? '';
         });
         _answerFocus.requestFocus();
@@ -501,7 +501,7 @@ class _ThemedCrosswordScreenState extends ConsumerState<ThemedCrosswordScreen> {
   void _handleAnswerSubmit(String value, ThemedPuzzleState puzzleState) {
     if (_selectedWord == null || value.trim().isEmpty) return;
 
-    final puzzleNotifier = ref.read(themedPuzzleProvider(widget.theme.id).notifier);
+    final puzzleNotifier = ref.read(themedPuzzleProvider(widget.theme.id.toString()).notifier);
     final correctAnswer = _selectedWord!.word.word.toLowerCase();
     final userAnswer = value.trim().toLowerCase();
 
@@ -550,7 +550,7 @@ class _ThemedCrosswordScreenState extends ConsumerState<ThemedCrosswordScreen> {
 
   /// Seleccionar siguiente pista sin responder
   void _selectNextUnansweredClue(ThemedPuzzleState puzzleState) {
-    final puzzleNotifier = ref.read(themedPuzzleProvider(widget.theme.id).notifier);
+    final puzzleNotifier = ref.read(themedPuzzleProvider(widget.theme.id.toString()).notifier);
     
     // Buscar siguiente pista sin responder
     WordWithClue? nextWord;
@@ -593,7 +593,7 @@ class _ThemedCrosswordScreenState extends ConsumerState<ThemedCrosswordScreen> {
       
       if (key == LogicalKeyboardKey.backspace) {
         // Borrar letra actual
-        final puzzleNotifier = ref.read(themedPuzzleProvider(widget.theme.id).notifier);
+        final puzzleNotifier = ref.read(themedPuzzleProvider(widget.theme.id.toString()).notifier);
         final currentAnswer = puzzleNotifier.getAnswer(_selectedWord!.word) ?? '';
         if (currentAnswer.isNotEmpty && _selectedCellIndex > 0) {
           final newAnswer = currentAnswer.substring(0, _selectedCellIndex - 1) +
@@ -606,7 +606,7 @@ class _ThemedCrosswordScreenState extends ConsumerState<ThemedCrosswordScreen> {
       } else if (key.keyLabel.length == 1 && RegExp(r'[a-zA-Z]').hasMatch(key.keyLabel)) {
         // Ingresar letra
         final letter = key.keyLabel.toUpperCase();
-        final puzzleNotifier = ref.read(themedPuzzleProvider(widget.theme.id).notifier);
+        final puzzleNotifier = ref.read(themedPuzzleProvider(widget.theme.id.toString()).notifier);
         final currentAnswer = puzzleNotifier.getAnswer(_selectedWord!.word) ?? '';
         
         if (_selectedCellIndex < _selectedWord!.word.word.length) {

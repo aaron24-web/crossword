@@ -1,5 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:generate_crossword/database_service.dart';
+import 'package:generate_crossword/supabase_service.dart';
+import 'package:generate_crossword/utils.dart';
 
 /// Servicio para manejar las pistas/definiciones en español
 class CluesService {
@@ -10,10 +13,36 @@ class CluesService {
   Map<String, String> _clues = {};
   bool _isLoaded = false;
 
-  /// Cargar el diccionario de pistas desde el JSON
+  /// Cargar el diccionario de pistas
   Future<void> loadClues() async {
     if (_isLoaded) return;
 
+    if (await hasInternetConnection()) {
+      await _loadCluesFromSupabase();
+    } else {
+      await _loadCluesFromLocal();
+    }
+  }
+
+  Future<void> _loadCluesFromSupabase() async {
+    try {
+      final dbService = DatabaseService(SupabaseService.client);
+      final categories = await dbService.getCategories();
+      for (final category in categories) {
+        final words = await dbService.getWordsByCategory(category.id);
+        for (final word in words) {
+          _clues[word.word.toLowerCase().trim()] = word.clue;
+        }
+      }
+      _isLoaded = true;
+      print('✅ Loaded ${_clues.length} clues from Supabase');
+    } catch (e) {
+      print('❌ Error loading clues from Supabase: $e');
+      await _loadCluesFromLocal();
+    }
+  }
+
+  Future<void> _loadCluesFromLocal() async {
     try {
       final String jsonString = await rootBundle.loadString('assets/clues_spanish.json');
       final Map<String, dynamic> jsonData = json.decode(jsonString);
@@ -21,9 +50,9 @@ class CluesService {
       _clues = jsonData.map((key, value) => MapEntry(key, value.toString()));
       _isLoaded = true;
       
-      print('✅ Loaded ${_clues.length} clues in Spanish');
+      print('✅ Loaded ${_clues.length} clues in Spanish from local file');
     } catch (e) {
-      print('❌ Error loading clues: $e');
+      print('❌ Error loading clues from local file: $e');
       _clues = {};
     }
   }
