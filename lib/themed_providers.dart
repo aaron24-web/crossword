@@ -3,11 +3,15 @@ import 'dart:async';
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/services.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter/foundation.dart';
 
 import 'clues_service.dart';
+import 'database_service.dart';
 import 'isolates.dart';
 import 'level_data.dart';
 import 'model.dart' as model;
+import 'providers.dart';
+import 'supabase_service.dart';
 
 part 'themed_providers.g.dart';
 
@@ -17,30 +21,57 @@ part 'themed_providers.g.dart';
 Future<BuiltSet<String>> themedWordList(
   ThemedWordListRef ref,
   String themeId,
-) async {
+) async { // Added ')' and '{' and 'async'
+  final appMode = ref.watch(appModeProvider);
+  final dbService = DatabaseService(SupabaseService.client);
+  final cluesService = CluesService(dbService, appMode);
+
+  // Cargar pistas primero
+  await cluesService.loadClues();
+  
+  final re = RegExp(r'^[a-z]+$');
+  BuiltSet<String> wordsSet = BuiltSet<String>(); // Initialized wordsSet
+
   final level = GameLevels.getLevelById(int.parse(themeId));
   if (level == null) {
     return BuiltSet<String>();
   }
 
-  // Cargar pistas primero
-  await CluesService().loadClues();
-  
+  if (appMode == AppMode.online) {
+    try {
+      final dbService = DatabaseService(SupabaseService.client);
+      final wordsFromSupabase = await dbService.getWordsByCategory(int.parse(themeId));
+      wordsSet = wordsFromSupabase
+          .map((word) => word.word.toLowerCase().trim())
+          .where((word) => word.length > 2)
+          .where((word) => re.hasMatch(word))
+          .toBuiltSet();
+      
+      final wordsWithClues = wordsSet;
+
+      if (wordsWithClues.isNotEmpty) {
+        debugPrint('✅ Themed words loaded from Supabase for theme $themeId');
+        return wordsWithClues;
+      }
+    } catch (e) {
+      debugPrint('⚠️ Failed to load themed words from Supabase for theme $themeId, falling back to local assets: $e');
+      // Fallback to local assets if Supabase fails
+    }
+  }
+
+  // Load from local assets
   final data = await rootBundle.loadString(level.wordListAsset);
-  final allWords = data
+  wordsSet = data
       .split('\n')
       .map((e) => e.trim().toLowerCase())
       .where((e) => e.length > 2)
-      .toSet();
+      .where((word) => re.hasMatch(word))
+      .toBuiltSet();
 
-  // Filtrar solo palabras que tienen pista educativa (no genérica)
-  final wordsWithClues = allWords.where((word) {
-    final clue = CluesService().getClue(word);
-    // Verificar que no sea una pista genérica
-    return !clue.startsWith('Palabra de ');
-  }).toSet();
+  final wordsWithClues = wordsSet;
 
-  return BuiltSet<String>(wordsWithClues);
+  debugPrint('✅ Themed words loaded from local assets for theme $themeId');
+  return wordsWithClues;
 }
 
 /// Provider para generar crucigrama temático
@@ -52,8 +83,12 @@ Stream<model.WorkQueue> themedWorkQueue(
   // Cargar palabras del tema
   final wordListAsync = await ref.watch(themedWordListProvider(themeId).future);
   
+  final appMode = ref.watch(appModeProvider);
+  final dbService = DatabaseService(SupabaseService.client);
+  final cluesService = CluesService(dbService, appMode);
+
   // Cargar pistas
-  await CluesService().loadClues();
+  await cluesService.loadClues();
 
   // Tamaño fijo para niveles temáticos (más pequeño para mejor experiencia)
   const width = 10;
@@ -118,6 +153,10 @@ class ThemedPuzzle extends _$ThemedPuzzle {
       int number = 1;
       final numberedPositions = <String, int>{};
 
+      final appMode = ref.watch(appModeProvider);
+      final dbService = DatabaseService(SupabaseService.client);
+      final cluesService = CluesService(dbService, appMode);
+
       for (final word in words) {
         final key = '${word.location.x},${word.location.y}';
         
@@ -126,7 +165,7 @@ class ThemedPuzzle extends _$ThemedPuzzle {
         }
 
         final wordNumber = numberedPositions[key]!;
-        final clue = CluesService().getClue(word.word);
+        final clue = cluesService.getClue(word.word);
 
         wordsWithClues.add(WordWithClue(
           word: word,

@@ -1,14 +1,17 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'package:generate_crossword/database_service.dart';
-import 'package:generate_crossword/supabase_service.dart';
-import 'package:generate_crossword/utils.dart';
+import 'package:flutter/foundation.dart'; // For debugPrint
+
+import 'database_service.dart';
+import 'model.dart';
+import 'providers.dart'; // For AppMode
 
 /// Servicio para manejar las pistas/definiciones en español
 class CluesService {
-  static final CluesService _instance = CluesService._internal();
-  factory CluesService() => _instance;
-  CluesService._internal();
+  final DatabaseService _dbService;
+  final AppMode _appMode;
+
+  CluesService(this._dbService, this._appMode);
 
   Map<String, String> _clues = {};
   bool _isLoaded = false;
@@ -17,7 +20,7 @@ class CluesService {
   Future<void> loadClues() async {
     if (_isLoaded) return;
 
-    if (await hasInternetConnection()) {
+    if (_appMode == AppMode.online) {
       await _loadCluesFromSupabase();
     } else {
       await _loadCluesFromLocal();
@@ -26,18 +29,16 @@ class CluesService {
 
   Future<void> _loadCluesFromSupabase() async {
     try {
-      final dbService = DatabaseService(SupabaseService.client);
-      final categories = await dbService.getCategories();
-      for (final category in categories) {
-        final words = await dbService.getWordsByCategory(category.id);
-        for (final word in words) {
-          _clues[word.word.toLowerCase().trim()] = word.clue;
-        }
+      final List<Word> wordsWithClues = await _dbService.getWords(); // Assuming getWords() fetches all words with clues
+      _clues.clear(); // Clear previous clues if any
+      for (final word in wordsWithClues) {
+        _clues[word.word.toLowerCase().trim()] = word.clue;
       }
       _isLoaded = true;
-      print('✅ Loaded ${_clues.length} clues from Supabase');
+      debugPrint('✅ Loaded ${_clues.length} clues from Supabase');
     } catch (e) {
-      print('❌ Error loading clues from Supabase: $e');
+      debugPrint('❌ Error loading clues from Supabase: $e');
+      // Fallback to local if Supabase fails even in online mode
       await _loadCluesFromLocal();
     }
   }
@@ -50,9 +51,9 @@ class CluesService {
       _clues = jsonData.map((key, value) => MapEntry(key, value.toString()));
       _isLoaded = true;
       
-      print('✅ Loaded ${_clues.length} clues in Spanish from local file');
+      debugPrint('✅ Loaded ${_clues.length} clues in Spanish from local file');
     } catch (e) {
-      print('❌ Error loading clues from local file: $e');
+      debugPrint('❌ Error loading clues from local file: $e');
       _clues = {};
     }
   }

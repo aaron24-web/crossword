@@ -6,7 +6,7 @@ part of 'themed_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$themedWordListHash() => r'b681ec8750ca7aa45ba4d0fc91497f96e9acb623';
+String _$themedWordListHash() => r'272b30bfb81a6231d3c4c99a74b20310c49ad64b';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -166,7 +166,7 @@ class _ThemedWordListProviderElement
   String get themeId => (origin as ThemedWordListProvider).themeId;
 }
 
-String _$themedWorkQueueHash() => r'3c0502563d05f518a203a4944e915ef7523c38af';
+String _$themedWorkQueueHash() => r'e6679550535c3c8898fcc90f169a2f6a8aafa6bc';
 
 /// Provider para generar crucigrama temático
 ///
@@ -299,7 +299,7 @@ class _ThemedWorkQueueProviderElement
   String get themeId => (origin as ThemedWorkQueueProvider).themeId;
 }
 
-String _$themedPuzzleHash() => r'260116475d26f8d1411fdd268bb075446c8294c8';
+String _$themedPuzzleHash() => r'ce04e634acccbd6781bd37a3f7df238fe84cbf51';
 
 abstract class _$ThemedPuzzle
     extends BuildlessAutoDisposeAsyncNotifier<ThemedPuzzleState> {
