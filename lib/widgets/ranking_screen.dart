@@ -66,7 +66,7 @@ class RankingScreen extends ConsumerWidget {
                   return ListTile(
                     leading: Text('${index + 1}'),
                     title: Text(score.player?.name ?? 'Jugador anónimo'),
-                    trailing: Text(Duration(seconds: score.time).formatted),
+                    trailing: Text(Duration(milliseconds: score.time).formatted),
                   );
                 },
               ),

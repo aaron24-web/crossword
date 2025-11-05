@@ -8,6 +8,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../audio_service.dart';
 import '../level_data.dart';
 import '../model.dart' as model;
+import '../providers.dart';
+import '../supabase_service.dart';
 import '../themed_providers.dart';
 import '../utils.dart';
 import 'puzzle_completed_widget.dart';
@@ -33,6 +35,7 @@ class _ThemedCrosswordScreenState extends ConsumerState<ThemedCrosswordScreen> {
   final TextEditingController _answerController = TextEditingController();
   final FocusNode _answerFocus = FocusNode();
   Timer? _timer;
+  bool _isScoreSaved = false; // Para asegurar que el puntaje se guarde solo una vez
 
   @override
   void initState() {
@@ -80,7 +83,22 @@ class _ThemedCrosswordScreenState extends ConsumerState<ThemedCrosswordScreen> {
           }
           
           if (puzzleState.isCompleted) {
-            return PuzzleCompletedWidget();
+            // Detener el cronómetro y guardar el puntaje solo una vez
+            if (!_isScoreSaved) {
+              puzzleState.stopwatch.stop();
+              _isScoreSaved = true;
+              
+              final player = ref.read(playerProvider);
+              if (player != null) {
+                SupabaseService.addScore(
+                  playerId: player.id.toString(),
+                  time: puzzleState.stopwatch.elapsedMilliseconds,
+                  categoryId: widget.theme.id,
+                );
+              }
+            }
+            
+            return PuzzleCompletedWidget(time: puzzleState.stopwatch.elapsed);
           }
 
           return _buildGameView(puzzleState);

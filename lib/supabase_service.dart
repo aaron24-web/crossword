@@ -12,4 +12,22 @@ class SupabaseService {
   }
 
   static SupabaseClient get client => Supabase.instance.client;
+
+  static Future<void> addScore({
+    required String playerId,
+    required int time,
+    required int categoryId,
+  }) async {
+    try {
+      await client.from('scores').insert({
+        'player_id': playerId,
+        'time': time,
+        'category_id': categoryId,
+      });
+    } catch (e) {
+      // For now, just print the error. In a real app, you might want to handle this more gracefully.
+      print('Error saving score: $e');
+      rethrow;
+    }
+  }
 }

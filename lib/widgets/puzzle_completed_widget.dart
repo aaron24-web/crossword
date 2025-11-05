@@ -3,11 +3,14 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../audio_service.dart';
+import '../utils.dart';
 import 'confetti_widget.dart';
 import 'home_screen.dart';
 
 class PuzzleCompletedWidget extends StatefulWidget {
-  const PuzzleCompletedWidget({super.key});
+  final Duration time;
+
+  const PuzzleCompletedWidget({super.key, required this.time});
 
   @override
   State<PuzzleCompletedWidget> createState() => _PuzzleCompletedWidgetState();
@@ -87,6 +90,21 @@ class _PuzzleCompletedWidgetState extends State<PuzzleCompletedWidget> {
               )
                   .animate()
                   .fadeIn(duration: 400.ms, delay: 400.ms)
+                  .slideY(begin: 0.3, end: 0),
+              
+              SizedBox(height: 20),
+
+              // Texto del tiempo
+              Text(
+                'Tu tiempo: ${widget.time.formatted}',
+                style: GoogleFonts.poppins(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+              )
+                  .animate()
+                  .fadeIn(duration: 400.ms, delay: 500.ms)
                   .slideY(begin: 0.3, end: 0),
 
               SizedBox(height: 50),

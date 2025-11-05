@@ -33,7 +33,7 @@ class CrosswordPuzzleApp extends StatelessWidget {
               return workQueueAsync.when(
                 data: (workQueue) {
                   if (puzzleSolved) {
-                    return PuzzleCompletedWidget();
+                    return PuzzleCompletedWidget(time: Duration.zero);
                   }
                   if (workQueue.isCompleted &&
                       workQueue.crossword.characters.isNotEmpty) {
