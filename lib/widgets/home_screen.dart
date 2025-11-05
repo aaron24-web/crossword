@@ -50,11 +50,6 @@ class HomeScreen extends StatelessWidget {
                 // Botón Niveles Temáticos (NUEVO)
                 _buildLevelsButton(context),
 
-                SizedBox(height: 20),
-
-                // Botón Configuración (placeholder)
-                _buildSettingsButton(context),
-
                 Spacer(flex: 2),
 
                 // Versión
@@ -271,60 +266,6 @@ class HomeScreen extends StatelessWidget {
         .slideY(begin: 0.3, end: 0);
   }
 
-  Widget _buildSettingsButton(BuildContext context) {
-    return Container(
-      width: 280,
-      height: 60,
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.3),
-          width: 2,
-        ),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            // TODO: Abrir pantalla de configuración
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Configuración próximamente'),
-                duration: Duration(seconds: 1),
-              ),
-            );
-          },
-          borderRadius: BorderRadius.circular(30),
-          child: Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.settings,
-                  size: 28,
-                  color: Colors.white,
-                ),
-                SizedBox(width: 10),
-                Text(
-                  'CONFIGURACIÓN',
-                  style: GoogleFonts.poppins(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                    letterSpacing: 1,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    )
-        .animate()
-        .fadeIn(duration: 600.ms, delay: 800.ms)
-        .slideY(begin: 0.3, end: 0);
-  }
 
   Widget _buildVersion() {
     return Text(
