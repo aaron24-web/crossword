@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'audio_service.dart';
+import 'database_service.dart';
+import 'model.dart';
+import 'providers.dart';
 import 'supabase_service.dart';
-import 'widgets/player_registration_screen.dart';
+import 'widgets/home_screen.dart';
+import 'widgets/login_screen.dart';
 
 void main() async {
   // Asegurar que Flutter esté inicializado
@@ -22,8 +27,24 @@ void main() async {
     // Continuar sin audio si falla
   }
 
+  final prefs = await SharedPreferences.getInstance();
+  final playerId = prefs.getInt('player_id');
+
+  Widget home = const LoginScreen();
+  Player? player;
+  if (playerId != null) {
+    final dbService = DatabaseService(SupabaseService.client);
+    player = await dbService.getPlayerById(playerId);
+    if (player != null) {
+      home = const HomeScreen();
+    }
+  }
+
   runApp(
     ProviderScope(
+      overrides: [
+        if (player != null) playerProvider.overrideWith((ref) => player),
+      ],
       child: MaterialApp(
         title: 'Crossword Puzzle',
         debugShowCheckedModeBanner: false,
@@ -46,7 +67,7 @@ void main() async {
             ),
           ),
         ),
-        home: PlayerRegistrationScreen(),
+        home: home,
       ),
     ),
   );

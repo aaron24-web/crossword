@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +9,7 @@ import '../audio_service.dart';
 import '../level_data.dart';
 import '../model.dart' as model;
 import '../themed_providers.dart';
+import '../utils.dart';
 import 'puzzle_completed_widget.dart';
 
 /// Pantalla del crucigrama temático completo
@@ -29,31 +32,28 @@ class _ThemedCrosswordScreenState extends ConsumerState<ThemedCrosswordScreen> {
   final FocusNode _gridFocus = FocusNode();  // Focus para capturar teclado
   final TextEditingController _answerController = TextEditingController();
   final FocusNode _answerFocus = FocusNode();
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {});
+    });
+  }
 
   @override
   void dispose() {
     _gridFocus.dispose();
     _answerController.dispose();
     _answerFocus.dispose();
+    _timer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final puzzleAsync = ref.watch(themedPuzzleProvider(widget.theme.id.toString()));
-    final workQueueAsync = ref.watch(themedWorkQueueProvider(widget.theme.id.toString()));
-
-    // Inicializar puzzle cuando el crucigrama esté listo
-    workQueueAsync.whenData((workQueue) {
-      if (workQueue.isCompleted && workQueue.crossword.characters.isNotEmpty) {
-        final puzzleNotifier = ref.read(themedPuzzleProvider(widget.theme.id.toString()).notifier);
-        puzzleAsync.whenData((puzzleState) {
-          if (puzzleState.isGenerating) {
-            puzzleNotifier.initializeWithCrossword(workQueue.crossword);
-          }
-        });
-      }
-    });
 
     return Scaffold(
       appBar: AppBar(
@@ -129,6 +129,13 @@ class _ThemedCrosswordScreenState extends ConsumerState<ThemedCrosswordScreen> {
       // Layout móvil: Crucigrama arriba, pistas abajo
       return Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              puzzleState.stopwatch.elapsed.formatted,
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+          ),
           // Cuadrícula (arriba - más espacio)
           Expanded(
             flex: 3,

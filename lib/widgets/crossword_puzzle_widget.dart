@@ -42,7 +42,7 @@ class _CrosswordPuzzleWidgetState extends ConsumerState<CrosswordPuzzleWidget> {
   @override
   Widget build(BuildContext context) {
     final size = ref.watch(sizeProvider);
-    ref.listen(puzzleProvider.select((puzzle) => puzzle.solved), (previous, solved) {
+    ref.listen(puzzleProvider.select((puzzle) => puzzle.solved), (previous, solved) async {
       if (solved) {
         _stopwatch.stop();
         _timer.cancel();
@@ -55,7 +55,7 @@ class _CrosswordPuzzleWidgetState extends ConsumerState<CrosswordPuzzleWidget> {
             ..categoryId = theme.id,
         );
         final dbService = DatabaseService(SupabaseService.client);
-        dbService.addScore(score);
+        await dbService.addScore(score);
       }
     });
 

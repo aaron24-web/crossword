@@ -12,7 +12,10 @@ final categoriesProvider = FutureProvider<List<Category>>((ref) async {
   return dbService.getCategories();
 });
 
-final selectedCategoryProvider = StateProvider<Category?>((ref) => null);
+final selectedCategoryProvider = StateProvider<Category?>((ref) {
+  final categories = ref.watch(categoriesProvider);
+  return categories.asData?.value.first;
+});
 
 final scoresProvider = FutureProvider<List<Score>>((ref) async {
   final selectedCategory = ref.watch(selectedCategoryProvider);

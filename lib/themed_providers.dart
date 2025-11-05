@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/services.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -97,67 +99,62 @@ class WordWithClue {
 /// Provider para el crucigrama temático con pistas
 @riverpod
 class ThemedPuzzle extends _$ThemedPuzzle {
-  model.Crossword? _crossword;
-  Map<String, String> _userAnswers = {};
-  List<WordWithClue> _wordsWithClues = [];
+  final _stopwatch = Stopwatch();
 
   @override
   Future<ThemedPuzzleState> build(String themeId) async {
-    // Retornar estado inicial de generación
-    // El crucigrama se cargará desde la UI usando el stream provider
+    final workQueue = await ref.watch(themedWorkQueueProvider(themeId).future);
+
+    if (workQueue.isCompleted && workQueue.crossword.characters.isNotEmpty) {
+      final crossword = workQueue.crossword;
+      final words = crossword.words.toList();
+      words.sort((a, b) {
+        final compareY = a.location.y.compareTo(b.location.y);
+        if (compareY != 0) return compareY;
+        return a.location.x.compareTo(b.location.x);
+      });
+
+      final wordsWithClues = <WordWithClue>[];
+      int number = 1;
+      final numberedPositions = <String, int>{};
+
+      for (final word in words) {
+        final key = '${word.location.x},${word.location.y}';
+        
+        if (!numberedPositions.containsKey(key)) {
+          numberedPositions[key] = number++;
+        }
+
+        final wordNumber = numberedPositions[key]!;
+        final clue = CluesService().getClue(word.word);
+
+        wordsWithClues.add(WordWithClue(
+          word: word,
+          clue: clue,
+          number: wordNumber,
+        ));
+      }
+
+      _stopwatch.start();
+
+      return ThemedPuzzleState(
+        crossword: crossword,
+        wordsWithClues: wordsWithClues,
+        userAnswers: {},
+        isCompleted: false,
+        isGenerating: false,
+        stopwatch: _stopwatch,
+      );
+    }
+
     return ThemedPuzzleState(
       crossword: null,
       wordsWithClues: [],
       userAnswers: {},
       isCompleted: false,
       isGenerating: true,
+      stopwatch: _stopwatch,
     );
-  }
-  
-  /// Inicializar puzzle con un crucigrama generado
-  void initializeWithCrossword(model.Crossword crossword) {
-    _crossword = crossword;
-    _generateWordsWithClues();
-    
-    state = AsyncValue.data(ThemedPuzzleState(
-      crossword: _crossword,
-      wordsWithClues: _wordsWithClues,
-      userAnswers: _userAnswers,
-      isCompleted: false,
-      isGenerating: false,
-    ));
-  }
-
-  void _generateWordsWithClues() {
-    if (_crossword == null) return;
-
-    final words = _crossword!.words.toList();
-    words.sort((a, b) {
-      final compareY = a.location.y.compareTo(b.location.y);
-      if (compareY != 0) return compareY;
-      return a.location.x.compareTo(b.location.x);
-    });
-
-    _wordsWithClues = [];
-    int number = 1;
-    final numberedPositions = <String, int>{};
-
-    for (final word in words) {
-      final key = '${word.location.x},${word.location.y}';
-      
-      if (!numberedPositions.containsKey(key)) {
-        numberedPositions[key] = number++;
-      }
-
-      final wordNumber = numberedPositions[key]!;
-      final clue = CluesService().getClue(word.word);
-
-      _wordsWithClues.add(WordWithClue(
-        word: word,
-        clue: clue,
-        number: wordNumber,
-      ));
-    }
   }
 
   /// Escribir respuesta para una palabra (solo si es correcta)
@@ -165,30 +162,33 @@ class ThemedPuzzle extends _$ThemedPuzzle {
     final key = _getWordKey(word);
     final cleanAnswer = answer.toLowerCase().trim();
     
+    final currentState = state.value!;
+    final userAnswers = Map<String, String>.from(currentState.userAnswers);
+
     // Solo guardar si la respuesta es correcta
     if (cleanAnswer == word.word.toLowerCase()) {
-      _userAnswers[key] = cleanAnswer;
+      userAnswers[key] = cleanAnswer;
     } else {
       // Si es incorrecta, eliminar cualquier respuesta previa
-      _userAnswers.remove(key);
+      userAnswers.remove(key);
     }
     
     // Verificar si el puzzle está completo
-    final isCompleted = _checkIfCompleted();
+    final isCompleted = _checkIfCompleted(currentState.crossword!, userAnswers);
+    if (isCompleted) {
+      _stopwatch.stop();
+    }
     
-    state = AsyncValue.data(ThemedPuzzleState(
-      crossword: _crossword,
-      wordsWithClues: _wordsWithClues,
-      userAnswers: _userAnswers,
+    state = AsyncValue.data(currentState.copyWith(
+      userAnswers: userAnswers,
       isCompleted: isCompleted,
-      isGenerating: false,
     ));
   }
 
   /// Obtener respuesta del usuario para una palabra
   String? getAnswer(model.CrosswordWord word) {
     final key = _getWordKey(word);
-    return _userAnswers[key];
+    return state.value?.userAnswers[key];
   }
 
   /// Verificar si una respuesta es correcta
@@ -199,11 +199,10 @@ class ThemedPuzzle extends _$ThemedPuzzle {
   }
 
   /// Verificar si el puzzle está completado
-  bool _checkIfCompleted() {
-    if (_crossword == null) return false;
-    
-    for (final word in _crossword!.words) {
-      if (!isAnswerCorrect(word)) {
+  bool _checkIfCompleted(model.Crossword crossword, Map<String, String> userAnswers) {
+    for (final word in crossword.words) {
+      final key = _getWordKey(word);
+      if (userAnswers[key] != word.word.toLowerCase()) {
         return false;
       }
     }
@@ -216,22 +215,18 @@ class ThemedPuzzle extends _$ThemedPuzzle {
 
   /// Obtener número de una palabra
   int? getWordNumber(model.CrosswordWord word) {
-    final wordWithClue = _wordsWithClues.firstWhere(
+    return state.value?.wordsWithClues.firstWhere(
       (w) => w.word == word,
       orElse: () => WordWithClue(word: word, clue: '', number: 0),
-    );
-    return wordWithClue.number > 0 ? wordWithClue.number : null;
+    ).number;
   }
 
   /// Limpiar todas las respuestas
   void clearAnswers() {
-    _userAnswers.clear();
-    state = AsyncValue.data(ThemedPuzzleState(
-      crossword: _crossword,
-      wordsWithClues: _wordsWithClues,
-      userAnswers: _userAnswers,
+    final currentState = state.value!;
+    state = AsyncValue.data(currentState.copyWith(
+      userAnswers: {},
       isCompleted: false,
-      isGenerating: false,
     ));
   }
 }
@@ -243,6 +238,7 @@ class ThemedPuzzleState {
   final Map<String, String> userAnswers;
   final bool isCompleted;
   final bool isGenerating;
+  final Stopwatch stopwatch;
 
   ThemedPuzzleState({
     required this.crossword,
@@ -250,6 +246,7 @@ class ThemedPuzzleState {
     required this.userAnswers,
     required this.isCompleted,
     required this.isGenerating,
+    required this.stopwatch,
   });
 
   List<WordWithClue> get acrossWords =>
@@ -257,4 +254,22 @@ class ThemedPuzzleState {
 
   List<WordWithClue> get downWords =>
       wordsWithClues.where((w) => w.word.direction == model.Direction.down).toList();
+
+  ThemedPuzzleState copyWith({
+    model.Crossword? crossword,
+    List<WordWithClue>? wordsWithClues,
+    Map<String, String>? userAnswers,
+    bool? isCompleted,
+    bool? isGenerating,
+    Stopwatch? stopwatch,
+  }) {
+    return ThemedPuzzleState(
+      crossword: crossword ?? this.crossword,
+      wordsWithClues: wordsWithClues ?? this.wordsWithClues,
+      userAnswers: userAnswers ?? this.userAnswers,
+      isCompleted: isCompleted ?? this.isCompleted,
+      isGenerating: isGenerating ?? this.isGenerating,
+      stopwatch: stopwatch ?? this.stopwatch,
+    );
+  }
 }

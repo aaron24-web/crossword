@@ -32,6 +32,7 @@ dependencies:
   google_fonts: ^6.2.1              # Fuentes personalizadas
   shimmer: ^3.0.0                   # Efectos de carga brillantes
   connectivity_plus: ^7.0.0
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:
